@@ -39,7 +39,7 @@ Request:
 ```
 GET http://localhost/vehicles/
 Headers:
-- Authorization: "bearer <authorization token>
+- Authorization: "bearer <authorization token>"
 ```
 
 Responses:
@@ -64,23 +64,23 @@ Authentication failure
 
 ## Persistence Layer
 
-For the persistence layer I chose to use a <b>Postgres</b > instance as the database (added to docker-compose) and <b>SQLAlchemy</b> as the ORM.
+For the persistence layer I've chosen <b>Postgres</b > as the database (added to docker-compose) and <b>SQLAlchemy</b> as the ORM.
 
-I leveraged the <b>prestart script</b> feature offered by the <b>tiangolo/uvicorn-gunicorn</b> Docker image to run a 'pseudo'-migration to create the database structure and insert the initial data (<b>create_database.py</b>). As I haven't work deeply with Python (outside DJango, that has is own migrations tool) I didn't know which is the best migrations package option to use (in Node.js I would use db-migrate or sequelize). I took a look at Alembic's documentation, but opted not to spend more time on it and go for a 'custom made' migration script.
+I've leveraged the <b>prestart script</b> feature offered by the <b>tiangolo/uvicorn-gunicorn</b> Docker image to run a <i>pseudo</i>-migration to create the database structure and insert the initial data (<b>create_database.py</b>). As I haven't worked deeply with migration in Python outside DJango (that has it's own migrations tool) I didn't know which would be the best migrations package to use (in Node.js I would use db-migrate or sequelize). I took a look at Alembic's documentation, but opted not to spend more time on it and go for a 'custom made' migration script.
 
-I've also used this prestart script to solve a pre-req problem between the app and postgres in docker compose. Normally I would customize the app's docker image so that it would execute a 'wait-for' script before starting the app. This script would keep checking if a pure `SELECT...` could be execute and, when so, would terminate. But, as I hade this prestart option in hand, I opted to to just a `sleep 5` command.
+I've also used this prestart script to solve a sync issue between the app and postgres in docker-compose. Normally I would customize the app's image so that it would execute a <i>wait-for</i> script before starting the app. This script would keep checking if a pure `SELECT...` could be execute and, when so, would terminate and the app would start. But, as I had this prestart option in hand, I opted to just add a `sleep 5` command.
 
 ## Authentication & Authorization
 
-I've used the JWT 'pattern' to encrypt the authenticate user.id in a token sent to the client and recover it on subsequent API calls. As per specification, the token expires after 10 minutes. 
+I've used the JWT standard to encrypt the authenticate `user.id` in a token sent to the client and recover it on subsequent API calls. As per specification, the token expires after 10 minutes. 
 
 ## Unit Tests
 
-As mentioned before, Python is not my primary programming language and so I'm not used to implement tests on it. Read some documentation about it but after some issues regarding packaging/execution scope I decided to to deliver the project without tests due to time x availability reasons. I aploogize for that, and would be glad to showcase some work I've done around automatic integration tests in Node.js using jest, nock, and custom made mock components to emulate AWS services and Slack integration.
+As mentioned before, Python is not my primary programming language and so I'm not used to implement tests on it. I've read some documentation about it but after some issues regarding packaging/execution-scope I decided to deliver the assignment without this deliverable due to time x availability reasons. I apologize for that, and would be glad to showcase some work I've done around automatic integration tests in Node.js using jest, nock, and custom made mock components to emulate AWS services and Slack integration.
 
 ## CloudFormation
 
-I haven't worked with CloudFormation directly, meaning that I haven't wrote a yaml manually. Normally I use the <b>Serverless</b> framework that handles the creation of all AWS artifacts. In this case, we would have to create the <b>Lambda</b> functions, then attaching it to <b>AWS API Gateway</b>, as per the example `serversless.yml` below from one of the projects I've built (I've masked/changed some info on the code below).
+I haven't worked with CloudFormation directly, meaning that I haven't wrote a yaml manually. Normally I use the <b>Serverless</b> framework that handles the creation of the AWS CloudFormation yaml/json, and also it's deployment. In that scenario, I would create the <b>Lambda</b> functions and attach them to <b>AWS API Gateway</b>, as per the example `serversless.yml` below from one of the projects I've built (I've masked/changed some info on the code below).
 
 ```
 service: xxx-api
